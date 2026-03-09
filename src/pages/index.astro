@@ -22,146 +22,454 @@ categories.forEach((cat: string) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>提示词模板库</title>
+  <title>🎨 提示词模板库</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --accent-primary: #8b5cf6;
+      --accent-secondary: #ec4899;
+      --accent-tertiary: #06b6d4;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-hover: rgba(255, 255, 255, 0.08);
+    }
+    
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+      font-family: 'Noto Sans SC', 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
       min-height: 100vh;
       padding: 40px 20px;
+      overflow-x: hidden;
     }
-    .container { max-width: 1000px; margin: 0 auto; }
+    
+    /* 动态背景 */
+    .bg-effects {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    
+    .bg-effects::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: 
+        radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.08) 0%, transparent 60%);
+      animation: bgShift 20s ease-in-out infinite;
+    }
+    
+    @keyframes bgShift {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(2%, 2%) rotate(1deg); }
+      66% { transform: translate(-1%, 1%) rotate(-1deg); }
+    }
+    
+    /* 浮动粒子 */
+    .particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(139, 92, 246, 0.6);
+      border-radius: 50%;
+      animation: float 15s infinite ease-in-out;
+    }
+    
+    .particle:nth-child(2) { left: 20%; animation-delay: -2s; background: rgba(236, 72, 153, 0.5); }
+    .particle:nth-child(3) { left: 40%; animation-delay: -4s; background: rgba(6, 182, 212, 0.5); }
+    .particle:nth-child(4) { left: 60%; animation-delay: -6s; }
+    .particle:nth-child(5) { left: 80%; animation-delay: -8s; background: rgba(236, 72, 153, 0.4); }
+    .particle:nth-child(6) { left: 10%; animation-delay: -10s; background: rgba(6, 182, 212, 0.4); }
+    .particle:nth-child(7) { left: 70%; animation-delay: -12s; }
+    .particle:nth-child(8) { left: 90%; animation-delay: -14s; background: rgba(139, 92, 246, 0.4); }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 1; transform: translateY(80vh) scale(1); }
+      90% { opacity: 1; transform: translateY(10vh) scale(0.8); }
+      100% { transform: translateY(-10vh) scale(0); opacity: 0; }
+    }
+    
+    .container { 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* 主标题 */
     h1 {
       text-align: center;
-      color: #fff;
-      font-size: 2.8rem;
-      margin-bottom: 50px;
-      text-shadow: 0 0 30px rgba(100, 200, 255, 0.5);
-      letter-spacing: 4px;
+      color: var(--text-primary);
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #fff 0%, #a5b4fc 50%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: titleGlow 3s ease-in-out infinite;
     }
+    
+    @keyframes titleGlow {
+      0%, 100% { filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.3)); }
+      50% { filter: drop-shadow(0 0 30px rgba(236, 72, 153, 0.4)); }
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      margin-bottom: 50px;
+      font-weight: 300;
+    }
+    
+    /* 返回按钮 */
     .back-btn {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      color: var(--text-primary);
+      border: 1px solid var(--glass-border);
       padding: 12px 24px;
-      border-radius: 25px;
+      border-radius: 12px;
       cursor: pointer;
       font-size: 0.95rem;
       margin-bottom: 30px;
+      transition: all 0.3s ease;
       display: none;
+      opacity: 0;
+      transform: translateX(-20px);
     }
-    .back-btn.visible { display: inline-block; }
+    .back-btn.visible { 
+      display: inline-block; 
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .back-btn:hover {
+      background: var(--glass-hover);
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+    }
+    
+    /* 分类网格 */
     .category-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 24px;
+      animation: fadeInUp 0.6s ease-out;
     }
-    .category-btn {
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
-      color: #fff;
-      border: none;
-      padding: 40px 30px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 1.3rem;
-      font-weight: 600;
-      transition: all 0.3s;
-    }
-    .category-btn:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
-    }
-    .category-btn .icon { font-size: 2rem; display: block; margin-bottom: 12px; }
     
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .category-btn {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(236, 72, 153, 0.15) 100%);
+      backdrop-filter: blur(20px);
+      color: var(--text-primary);
+      border: 1px solid var(--glass-border);
+      padding: 50px 36px;
+      border-radius: 24px;
+      cursor: pointer;
+      font-size: 1.25rem;
+      font-weight: 600;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .category-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transition: left 0.5s;
+    }
+    
+    .category-btn:hover::before {
+      left: 100%;
+    }
+    
+    .category-btn:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: var(--accent-primary);
+      box-shadow: 
+        0 20px 40px rgba(139, 92, 246, 0.3),
+        0 0 60px rgba(139, 92, 246, 0.15);
+    }
+    
+    .category-btn .icon { 
+      font-size: 2.5rem; 
+      display: block; 
+      margin-bottom: 16px;
+      filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.5));
+    }
+    
+    .category-btn .label {
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    /* 子分类 */
     .sub-category-grid {
       display: none;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
+      gap: 12px;
       margin-bottom: 40px;
+      flex-wrap: wrap;
+      animation: fadeInUp 0.4s ease-out;
     }
-    .sub-category-grid.visible { display: grid; }
-    .sub-category-btn {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 18px 24px;
-      border-radius: 14px;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-    .sub-category-btn:hover { background: rgba(255, 255, 255, 0.25); }
-    .sub-category-btn.active { background: linear-gradient(135deg, #00c6ff, #0072ff); }
+    .sub-category-grid.visible { display: flex; }
     
+    .sub-category-btn {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      color: var(--text-secondary);
+      border: 1px solid var(--glass-border);
+      padding: 14px 24px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+    .sub-category-btn:hover { 
+      background: var(--glass-hover);
+      color: var(--text-primary);
+      border-color: var(--accent-tertiary);
+    }
+    .sub-category-btn.active { 
+      background: linear-gradient(135deg, var(--accent-tertiary), var(--accent-primary));
+      color: #fff;
+      border-color: transparent;
+    }
+    
+    /* 提示词卡片网格 */
     .prompts-grid {
       display: none;
-      grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 20px;
+      animation: fadeInUp 0.5s ease-out;
     }
     .prompts-grid.visible { display: grid; }
+    
     .card {
-      background: rgba(255, 255, 255, 0.08);
+      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
       backdrop-filter: blur(20px);
       border-radius: 20px;
       padding: 28px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid var(--glass-border);
       position: relative;
+      transition: all 0.4s ease;
+      animation: cardFadeIn 0.5s ease-out backwards;
     }
-    .card h2 { color: #fff; font-size: 1.2rem; margin-bottom: 16px; padding-right: 90px; }
+    
+    @keyframes cardFadeIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(139, 92, 246, 0.4);
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 0 30px rgba(139, 92, 246, 0.15);
+    }
+    
+    .card h2 { 
+      color: var(--text-primary); 
+      font-size: 1.15rem; 
+      margin-bottom: 16px; 
+      padding-right: 100px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    
     .card .content {
-      color: rgba(255, 255, 255, 0.75);
-      font-size: 0.9rem;
-      line-height: 1.7;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      line-height: 1.8;
       margin-bottom: 20px;
       padding: 16px;
-      background: rgba(0, 0, 0, 0.25);
+      background: rgba(0, 0, 0, 0.3);
       border-radius: 12px;
       white-space: pre-wrap;
-      max-height: 180px;
+      max-height: 160px;
       overflow-y: auto;
+      border-left: 3px solid var(--accent-primary);
     }
-    .card .meta { display: flex; gap: 10px; flex-wrap: wrap; }
+    
+    .card .content::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .card .content::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.05);
+      border-radius: 3px;
+    }
+    
+    .card .content::-webkit-scrollbar-thumb {
+      background: var(--accent-primary);
+      border-radius: 3px;
+    }
+    
+    .card .meta { 
+      display: flex; 
+      gap: 8px; 
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    
     .category-tag {
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
       color: #fff;
-      padding: 5px 14px;
+      padding: 6px 14px;
       border-radius: 20px;
       font-size: 0.75rem;
+      font-weight: 500;
     }
+    
     .tag {
-      background: rgba(255, 255, 255, 0.15);
-      color: rgba(255, 255, 255, 0.8);
-      padding: 5px 12px;
-      border-radius: 15px;
+      background: var(--glass-bg);
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      border-radius: 16px;
       font-size: 0.75rem;
+      border: 1px solid var(--glass-border);
     }
+    
+    .date {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-left: auto;
+      opacity: 0.7;
+    }
+    
     .copy-btn {
       position: absolute;
       top: 20px;
       right: 20px;
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
       color: #fff;
       border: none;
-      padding: 8px 16px;
-      border-radius: 20px;
+      padding: 10px 18px;
+      border-radius: 10px;
       cursor: pointer;
       font-size: 0.8rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .copy-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+    }
+    
+    .copy-btn.copied {
+      background: linear-gradient(135deg, #10b981, #059669);
+    }
+    
+    /* Toast 提示 */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      z-index: 1000;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+    }
+    
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    
+    /* 响应式 */
+    @media (max-width: 768px) {
+      h1 { font-size: 2rem; }
+      .subtitle { font-size: 0.95rem; }
+      .category-grid { grid-template-columns: 1fr; }
+      .category-btn { padding: 36px 24px; font-size: 1.1rem; }
+      .prompts-grid { grid-template-columns: 1fr; }
+      .card { padding: 20px; }
+      .card h2 { padding-right: 80px; font-size: 1rem; }
+      .card .content { max-height: 140px; }
     }
   </style>
 </head>
 <body>
+  <!-- 背景效果 -->
+  <div class="bg-effects">
+    <div class="particles">
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+    </div>
+  </div>
+  
   <div class="container">
     <h1>🎨 提示词模板库</h1>
+    <p class="subtitle">AI创作，从一个好的提示词开始</p>
+    
     <button class="back-btn" id="backBtn">← 返回上一级</button>
     
     <!-- 大分类 -->
     <div class="category-grid" id="categoryGrid">
-      {categories.map((cat: string) => (
-        <button class="category-btn" data-cat={cat}>
+      {categories.map((cat: string, index: number) => (
+        <button 
+          class="category-btn" 
+          data-cat={cat}
+          style={`animation-delay: ${index * 0.1}s`}
+        >
           <span class="icon">
             {cat === '文生图提示词模版' ? '✏️' : cat === '图生视频提示词模版' ? '🎬' : '✨'}
           </span>
-          {cat}
+          <span class="label">{cat}</span>
         </button>
       ))}
     </div>
@@ -173,10 +481,21 @@ categories.forEach((cat: string) => {
     <div class="prompts-grid" id="promptsGrid"></div>
   </div>
 
+  <!-- Toast 提示 -->
+  <div class="toast" id="toast">✓ 已复制到剪贴板</div>
+
   <script define:vars={{ prompts, categorySubs }}>
     let currentLevel = 0;
     let currentCategory = '';
     let currentSubCategory = '';
+    
+    // Toast 显示
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
     
     // 大分类按钮点击
     document.querySelectorAll('.category-btn').forEach(btn => {
@@ -189,7 +508,6 @@ categories.forEach((cat: string) => {
     document.getElementById('backBtn').addEventListener('click', goBack);
     
     function showSub(cat) {
-      console.log('showSub:', cat);
       currentLevel = 1;
       currentCategory = cat;
       
@@ -201,8 +519,6 @@ categories.forEach((cat: string) => {
       const subs = categorySubs[cat] || [];
       const subGrid = document.getElementById('subCategoryGrid');
       
-      console.log('subs:', subs);
-      
       if (subs.length === 0) {
         showPrompts('');
       } else {
@@ -212,6 +528,8 @@ categories.forEach((cat: string) => {
         
         document.querySelectorAll('.sub-category-btn').forEach(btn => {
           btn.addEventListener('click', function() {
+            document.querySelectorAll('.sub-category-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
             showPrompts(this.dataset.sub);
           });
         });
@@ -219,7 +537,6 @@ categories.forEach((cat: string) => {
     }
     
     function showPrompts(subCat) {
-      console.log('showPrompts:', subCat);
       currentLevel = 2;
       currentSubCategory = subCat;
       
@@ -231,15 +548,15 @@ categories.forEach((cat: string) => {
         : prompts.filter(p => p.category === currentCategory);
       
       const grid = document.getElementById('promptsGrid');
-      grid.innerHTML = filtered.map(prompt => `
-        <div class="card">
+      grid.innerHTML = filtered.map((prompt, index) => `
+        <div class="card" style="animation-delay: ${index * 0.08}s">
           <button class="copy-btn">📋 复制</button>
           <h2>${prompt.title}</h2>
           <div class="content">${prompt.content}</div>
           <div class="meta">
             <span class="category-tag">${prompt.category}</span>
             ${(prompt.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('')}
-            <span class="tag">${prompt.date}</span>
+            <span class="date">${prompt.date}</span>
           </div>
         </div>
       `).join('');
@@ -248,8 +565,15 @@ categories.forEach((cat: string) => {
         btn.addEventListener('click', function() {
           const content = this.closest('.card').querySelector('.content').textContent;
           navigator.clipboard.writeText(content).then(() => {
-            this.textContent = '✓ 已复制';
-            setTimeout(() => this.textContent = '📋 复制', 2000);
+            this.classList.add('copied');
+            this.innerHTML = '✓ 已复制';
+            showToast('提示词已复制到剪贴板！');
+            setTimeout(() => {
+              this.classList.remove('copied');
+              this.innerHTML = '📋 复制';
+            }, 2000);
+          }).catch(() => {
+            showToast('复制失败，请手动复制');
           });
         });
       });
