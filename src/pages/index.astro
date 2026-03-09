@@ -36,7 +36,7 @@ const featuredPrompts = prompts.slice(0, 4);
     :root {
       --bg-primary: #0a0a0f;
       --bg-secondary: #12121a;
-      --bg-card: #16161f;
+      --bg-card: #1e1e28;
       --accent-violet: #8b5cf6;
       --accent-pink: #ec4899;
       --accent-cyan: #06b6d4;
@@ -470,12 +470,13 @@ const featuredPrompts = prompts.slice(0, 4);
     }
     
     .prompt-card {
-      background: linear-gradient(145deg, var(--bg-card), rgba(22, 22, 31, 0.8));
-      border: 1px solid var(--border-subtle);
+      background: linear-gradient(145deg, #252533 0%, #1a1a26 100%);
+      border: 1px solid rgba(139, 92, 246, 0.2);
       border-radius: 24px;
       overflow: hidden;
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       animation: cardIn 0.5s ease-out backwards;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
     
     @keyframes cardIn {
@@ -488,7 +489,7 @@ const featuredPrompts = prompts.slice(0, 4);
       border-color: var(--accent-violet);
       box-shadow: 
         0 20px 40px rgba(0,0,0,0.4),
-        0 0 40px rgba(139, 92, 246, 0.12);
+        0 0 40px rgba(139, 92, 246, 0.25);
     }
     
     .prompt-card-header {
@@ -553,8 +554,8 @@ const featuredPrompts = prompts.slice(0, 4);
     
     .prompt-text {
       padding: 20px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-subtle);
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(139, 92, 246, 0.15);
       border-radius: 16px;
       font-size: 0.85rem;
       line-height: 1.9;
@@ -563,7 +564,9 @@ const featuredPrompts = prompts.slice(0, 4);
       overflow-y: auto;
       font-family: 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
       border-left: 4px solid var(--accent-violet);
-      box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
+      box-shadow: 
+        inset 0 2px 8px rgba(0,0,0,0.3),
+        0 0 20px rgba(139, 92, 246, 0.05);
       position: relative;
     }
     
@@ -607,6 +610,36 @@ const featuredPrompts = prompts.slice(0, 4);
       padding: 8px 16px;
       background: rgba(255,255,255,0.05);
       border-radius: 24px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.2s ease;
+    }
+    
+    .meta-tag:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: var(--accent-violet);
+      color: var(--text-secondary);
+    }
+    
+    .meta-tag.primary {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.2));
+      color: #c4b5fd;
+      border-color: rgba(139, 92, 246, 0.4);
+      font-weight: 500;
+    }
+    
+    .meta-tag.category {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(6, 182, 212, 0.15));
+      color: #67e8f9;
+      border-color: rgba(6, 182, 212, 0.3);
+    }
+    
+    .meta-tag.date {
+      background: rgba(255,255,255,0.03);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
       font-size: 0.78rem;
       color: var(--text-muted);
       border: 1px solid var(--border-subtle);
@@ -879,7 +912,7 @@ const featuredPrompts = prompts.slice(0, 4);
             <div class="prompt-meta">
               <span class="meta-tag primary">${prompt.category}</span>
               ${(prompt.tags || []).map(tag => `<span class="meta-tag category">${tag}</span>`).join('')}
-              <span class="meta-tag">${prompt.date}</span>
+              <span class="meta-tag date">${prompt.date}</span>
             </div>
           </div>
         </div>
