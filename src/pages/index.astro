@@ -3,8 +3,18 @@ import fs from 'node:fs';
 
 const prompts = JSON.parse(fs.readFileSync('./data/prompts.json', 'utf-8'));
 
-// 获取所有大分类
+// 构建分类数据结构
 const categories = [...new Set(prompts.map((p: any) => p.category))];
+
+const categorySubs: Record<string, string[]> = {};
+categories.forEach((cat: string) => {
+  const items = prompts.filter((p: any) => p.category === cat);
+  const tags = new Set<string>();
+  items.forEach((p: any) => {
+    if (p.tags) p.tags.forEach((t: string) => tags.add(t));
+  });
+  categorySubs[cat] = Array.from(tags);
+});
 ---
 
 <!DOCTYPE html>
@@ -14,21 +24,14 @@ const categories = [...new Set(prompts.map((p: any) => p.category))];
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>提示词模板库</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
       min-height: 100vh;
       padding: 40px 20px;
     }
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-    }
+    .container { max-width: 1000px; margin: 0 auto; }
     h1 {
       text-align: center;
       color: #fff;
@@ -37,8 +40,6 @@ const categories = [...new Set(prompts.map((p: any) => p.category))];
       text-shadow: 0 0 30px rgba(100, 200, 255, 0.5);
       letter-spacing: 4px;
     }
-    
-    /* 返回按钮 */
     .back-btn {
       background: rgba(255, 255, 255, 0.15);
       color: #fff;
@@ -48,127 +49,65 @@ const categories = [...new Set(prompts.map((p: any) => p.category))];
       cursor: pointer;
       font-size: 0.95rem;
       margin-bottom: 30px;
-      transition: all 0.3s;
       display: none;
-      backdrop-filter: blur(10px);
     }
-    .back-btn:hover {
-      background: rgba(255, 255, 255, 0.25);
-      transform: translateX(-5px);
-    }
-    .back-btn.visible {
-      display: inline-block;
-    }
-    
-    /* 大分类按钮 */
+    .back-btn.visible { display: inline-block; }
     .category-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 24px;
-      animation: fadeIn 0.5s ease;
     }
     .category-btn {
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
       color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: none;
       padding: 40px 30px;
       border-radius: 20px;
       cursor: pointer;
       font-size: 1.3rem;
       font-weight: 600;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(10px);
+      transition: all 0.3s;
     }
     .category-btn:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
-      background: linear-gradient(135deg, rgba(102, 126, 234, 1) 0%, rgba(118, 75, 162, 1) 100%);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
     }
-    .category-btn .icon {
-      font-size: 2rem;
-      display: block;
-      margin-bottom: 12px;
-    }
+    .category-btn .icon { font-size: 2rem; display: block; margin-bottom: 12px; }
     
-    /* 子分类按钮 */
     .sub-category-grid {
       display: none;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 16px;
       margin-bottom: 40px;
-      animation: slideUp 0.4s ease;
     }
-    .sub-category-grid.visible {
-      display: grid;
-    }
+    .sub-category-grid.visible { display: grid; }
     .sub-category-btn {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.15);
       color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
       padding: 18px 24px;
       border-radius: 14px;
       cursor: pointer;
       font-size: 1rem;
-      transition: all 0.3s;
-      backdrop-filter: blur(10px);
     }
-    .sub-category-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateY(-3px);
-    }
-    .sub-category-btn.active {
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
-      border-color: transparent;
-      box-shadow: 0 8px 25px rgba(0, 198, 255, 0.4);
-    }
+    .sub-category-btn:hover { background: rgba(255, 255, 255, 0.25); }
+    .sub-category-btn.active { background: linear-gradient(135deg, #00c6ff, #0072ff); }
     
-    /* 提示词卡片 */
     .prompts-grid {
       display: none;
       grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
       gap: 24px;
     }
-    .prompts-grid.visible {
-      display: grid;
-      animation: fadeIn 0.5s ease;
-    }
+    .prompts-grid.visible { display: grid; }
     .card {
       background: rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(20px);
       border-radius: 20px;
       padding: 28px;
       border: 1px solid rgba(255, 255, 255, 0.15);
-      transition: all 0.4s;
       position: relative;
-      overflow: hidden;
     }
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #00c6ff, #0072ff);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-      border-color: rgba(0, 198, 255, 0.3);
-    }
-    .card:hover::before {
-      opacity: 1;
-    }
-    .card h2 {
-      color: #fff;
-      font-size: 1.2rem;
-      margin-bottom: 16px;
-      padding-right: 100px;
-      font-weight: 600;
-    }
+    .card h2 { color: #fff; font-size: 1.2rem; margin-bottom: 16px; padding-right: 90px; }
     .card .content {
       color: rgba(255, 255, 255, 0.75);
       font-size: 0.9rem;
@@ -178,30 +117,16 @@ const categories = [...new Set(prompts.map((p: any) => p.category))];
       background: rgba(0, 0, 0, 0.25);
       border-radius: 12px;
       white-space: pre-wrap;
-      word-break: break-word;
       max-height: 180px;
       overflow-y: auto;
     }
-    .card .content::-webkit-scrollbar {
-      width: 6px;
-    }
-    .card .content::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 3px;
-    }
-    .card .meta {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+    .card .meta { display: flex; gap: 10px; flex-wrap: wrap; }
     .category-tag {
       background: linear-gradient(135deg, #667eea, #764ba2);
       color: #fff;
       padding: 5px 14px;
       border-radius: 20px;
       font-size: 0.75rem;
-      font-weight: 500;
     }
     .tag {
       background: rgba(255, 255, 255, 0.15);
@@ -210,13 +135,6 @@ const categories = [...new Set(prompts.map((p: any) => p.category))];
       border-radius: 15px;
       font-size: 0.75rem;
     }
-    .date {
-      color: rgba(255, 255, 255, 0.4);
-      font-size: 0.75rem;
-      margin-left: auto;
-    }
-    
-    /* 复制按钮 */
     .copy-btn {
       position: absolute;
       top: 20px;
@@ -228,179 +146,132 @@ const categories = [...new Set(prompts.map((p: any) => p.category))];
       border-radius: 20px;
       cursor: pointer;
       font-size: 0.8rem;
-      transition: all 0.3s;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .copy-btn:hover {
-      transform: scale(1.08);
-      box-shadow: 0 5px 20px rgba(0, 198, 255, 0.5);
-    }
-    .copy-btn.copied {
-      background: linear-gradient(135deg, #11998e, #38ef7d);
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🎨 提示词模板库</h1>
+    <button class="back-btn" id="backBtn">← 返回上一级</button>
     
-    <!-- 返回按钮 -->
-    <button class="back-btn" id="backBtn" onclick="goBack()">← 返回上一级</button>
-    
-    <!-- 第一层：大分类 -->
+    <!-- 大分类 -->
     <div class="category-grid" id="categoryGrid">
-      <button class="category-btn" onclick="showSubCategories('文生图提示词模版')">
-        <span class="icon">✏️</span>
-        文生图提示词模版
-      </button>
-      <button class="category-btn" onclick="showSubCategories('图生视频提示词模版')">
-        <span class="icon">🎬</span>
-        图生视频提示词模版
-      </button>
-      <button class="category-btn" onclick="showSubCategories('质量提示词模版')">
-        <span class="icon">✨</span>
-        质量提示词模版
-      </button>
+      {categories.map((cat: string) => (
+        <button class="category-btn" data-cat={cat}>
+          <span class="icon">
+            {cat === '文生图提示词模版' ? '✏️' : cat === '图生视频提示词模版' ? '🎬' : '✨'}
+          </span>
+          {cat}
+        </button>
+      ))}
     </div>
     
-    <!-- 第二层：子分类 -->
+    <!-- 子分类 -->
     <div class="sub-category-grid" id="subCategoryGrid"></div>
     
-    <!-- 第三层：提示词卡片 -->
+    <!-- 提示词卡片 -->
     <div class="prompts-grid" id="promptsGrid"></div>
   </div>
 
-  <script define:vars={{ prompts }}>
-    const categoryData = {};
-    
-    // 构建分类数据
-    prompts.forEach(p => {
-      if (!categoryData[p.category]) {
-        categoryData[p.category] = [...new Set(p.tags || [])];
-      }
-    });
-    
+  <script define:vars={{ prompts, categorySubs }}>
     let currentLevel = 0;
     let currentCategory = '';
     let currentSubCategory = '';
     
-    function showSubCategories(category) {
+    // 大分类按钮点击
+    document.querySelectorAll('.category-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        showSub(this.dataset.cat);
+      });
+    });
+    
+    // 返回按钮
+    document.getElementById('backBtn').addEventListener('click', goBack);
+    
+    function showSub(cat) {
+      console.log('showSub:', cat);
       currentLevel = 1;
-      currentCategory = category;
+      currentCategory = cat;
       
-      // 隐藏大分类，显示子分类
       document.getElementById('categoryGrid').style.display = 'none';
       document.getElementById('subCategoryGrid').classList.add('visible');
       document.getElementById('promptsGrid').classList.remove('visible');
       document.getElementById('backBtn').classList.add('visible');
       
-      // 渲染子分类
-      const subCategories = categoryData[category] || [];
+      const subs = categorySubs[cat] || [];
       const subGrid = document.getElementById('subCategoryGrid');
       
-      if (subCategories.length === 0) {
-        // 如果没有子分类，直接显示该分类下的所有卡片
+      console.log('subs:', subs);
+      
+      if (subs.length === 0) {
         showPrompts('');
       } else {
-        subGrid.innerHTML = subCategories.map(sub => 
-          `<button class="sub-category-btn" onclick="showPrompts('${sub}')">${sub}</button>`
+        subGrid.innerHTML = subs.map(sub => 
+          `<button class="sub-category-btn" data-sub="${sub}">${sub}</button>`
         ).join('');
+        
+        document.querySelectorAll('.sub-category-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            showPrompts(this.dataset.sub);
+          });
+        });
       }
-      
-      // 清除卡片
-      document.getElementById('promptsGrid').innerHTML = '';
     }
     
-    function showPrompts(subCategory) {
+    function showPrompts(subCat) {
+      console.log('showPrompts:', subCat);
       currentLevel = 2;
-      currentSubCategory = subCategory;
+      currentSubCategory = subCat;
       
-      // 显示卡片
       document.getElementById('subCategoryGrid').classList.remove('visible');
       document.getElementById('promptsGrid').classList.add('visible');
       
-      // 高亮当前子分类
-      document.querySelectorAll('.sub-category-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.textContent === subCategory);
-      });
-      
-      // 渲染卡片
-      const filtered = subCategory 
-        ? prompts.filter(p => p.category === currentCategory && p.tags?.includes(subCategory))
+      const filtered = subCat 
+        ? prompts.filter(p => p.category === currentCategory && p.tags?.includes(subCat))
         : prompts.filter(p => p.category === currentCategory);
       
       const grid = document.getElementById('promptsGrid');
-      
-      grid.innerHTML = filtered.map((prompt, index) => `
+      grid.innerHTML = filtered.map(prompt => `
         <div class="card">
-          <button class="copy-btn" onclick="copyContent(this)">📋 复制</button>
+          <button class="copy-btn">📋 复制</button>
           <h2>${prompt.title}</h2>
           <div class="content">${prompt.content}</div>
           <div class="meta">
             <span class="category-tag">${prompt.category}</span>
-            ${prompt.tags?.map(tag => `<span class="tag">${tag}</span>`).join('')}
-            <span class="date">${prompt.date}</span>
+            ${(prompt.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('')}
+            <span class="tag">${prompt.date}</span>
           </div>
         </div>
       `).join('');
       
-      if (filtered.length === 0) {
-        grid.innerHTML = '<div class="empty">暂无提示词</div>';
-      }
+      document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const content = this.closest('.card').querySelector('.content').textContent;
+          navigator.clipboard.writeText(content).then(() => {
+            this.textContent = '✓ 已复制';
+            setTimeout(() => this.textContent = '📋 复制', 2000);
+          });
+        });
+      });
     }
     
     function goBack() {
       if (currentLevel === 2) {
-        // 从卡片返回子分类
         currentLevel = 1;
         document.getElementById('promptsGrid').classList.remove('visible');
-        
-        const subCategories = categoryData[currentCategory] || [];
-        if (subCategories.length > 0) {
+        const subs = categorySubs[currentCategory] || [];
+        if (subs.length > 0) {
           document.getElementById('subCategoryGrid').classList.add('visible');
         } else {
           document.getElementById('categoryGrid').style.display = 'grid';
           document.getElementById('backBtn').classList.remove('visible');
         }
       } else if (currentLevel === 1) {
-        // 从子分类返回大分类
         currentLevel = 0;
         document.getElementById('subCategoryGrid').classList.remove('visible');
         document.getElementById('categoryGrid').style.display = 'grid';
         document.getElementById('backBtn').classList.remove('visible');
       }
-      currentCategory = '';
-      currentSubCategory = '';
-    }
-    
-    function copyContent(btn) {
-      const card = btn.closest('.card');
-      const content = card.querySelector('.content').textContent;
-      
-      navigator.clipboard.writeText(content).then(() => {
-        const originalText = btn.textContent;
-        btn.textContent = '✓ 已复制';
-        btn.classList.add('copied');
-        
-        setTimeout(() => {
-          btn.textContent = originalText;
-          btn.classList.remove('copied');
-        }, 2000);
-      }).catch(err => {
-        console.error('复制失败:', err);
-      });
     }
   </script>
 </body>
