@@ -3,28 +3,56 @@
     "title": "角色克隆模板（基于参考图）",
     "content": "适用场景：你已经有一张满意的角色图，想让 AI 帮该角色制作一套标准的\"定妆照\"或 3D 建模参考。\n\nCreate a professional character reference sheet based strictly on the uploaded reference image. Use a clean, neutral plain background and present the sheet as a technical model turnaround while matching the exact visual style of the reference. Arrange the composition into two horizontal rows. Top row: four full-body standing views placed side-by-side: front view, left profile view, right profile view, back view. Bottom row: three highly detailed close-up portraits: front portrait, left profile portrait, right profile portrait. Maintain perfect identity consistency, relaxed A-pose, and consistent head height. Output a crisp, print-ready reference sheet with sharp details.",
     "category": "文生图提示词模版",
-    "tags": ["人设提示词模版", "角色克隆"],
+    "tags": ["人设提示词模版"],
     "date": "2026-03-09"
   },
   {
     "title": "角色原创模板（基于文字描述）",
     "content": "适用场景：从零开始设计一个新角色。\n\nCreate a professional character reference sheet of [a futuristic tech explorer, female, wearing a matte white carbon fiber exosuit, short neon blue bob haircut, glowing orange tactical goggles]. Use a clean, neutral plain background and present the sheet as a technical model turnaround in a photographic style. Arrange the composition into two horizontal rows. Top row: four full-body standing views: front view, left profile view, right profile view, back view. Bottom row: three highly detailed close-up portraits: front portrait, left profile portrait, right profile portrait. Maintain perfect identity consistency, accurate anatomy, and consistent facial scale. Lighting should be natural and controlled. Output a crisp, print-ready reference sheet.",
     "category": "文生图提示词模版",
-    "tags": ["人设提示词模版", "角色原创"],
+    "tags": ["人设提示词模版"],
     "date": "2026-03-09"
   },
   {
     "title": "智能换装模板（局部迭代）",
     "content": "适用场景：角色长相和身材已经固定，需要尝试不同的服装风格。\n\nKeep the same character sheet layout. Keep the physical characteristics, facial features, and expression exactly the same as the previous reference. Change the outfit to [a traditional crimson Hanfu with intricate gold phoenix embroidery and flowing silk sleeves]. Ensure the new clothing maintains the same technical turnaround perspective and lighting consistency across all panels.",
     "category": "文生图提示词模版",
-    "tags": ["人设提示词模版", "智能换装"],
+    "tags": ["人设提示词模版"],
     "date": "2026-03-09"
   },
   {
     "title": "nano banana三视图提示词",
     "content": "基于参考图生成角色设计标准三视图：正视图呈现角色正面全貌，注重身体比例与服饰细节刻画；侧视图展现角色侧面轮廓，强调线条流畅性与立体感塑造；背视图呈现角色背面造型，突出背部装饰与整体协调性。在最左侧添加角色面部正视图的特写，聚焦五官细节与表情刻画，运用细腻光影凸显面部层次感。背景修改成纯白色，整体保持与参考图一致的美术风格和色彩搭配。比例16:9",
     "category": "文生图提示词模版",
-    "tags": ["人设提示词模版", "三视图"],
+    "tags": ["人设提示词模版"],
+    "date": "2026-03-09"
+  },
+  {
+    "title": "图片转视频提示词",
+    "content": "将静态图片转换为流畅视频的提示词模板...",
+    "category": "图生视频提示词模版",
+    "tags": ["基础转换"],
+    "date": "2026-03-09"
+  },
+  {
+    "title": "人物动作生成提示词",
+    "content": "基于参考图生成人物动作序列...",
+    "category": "图生视频提示词模版",
+    "tags": ["动作生成"],
+    "date": "2026-03-09"
+  },
+  {
+    "title": "画质增强提示词",
+    "content": "提升图片清晰度和质量的提示词...",
+    "category": "质量提示词模版",
+    "tags": ["画质增强"],
+    "date": "2026-03-09"
+  },
+  {
+    "title": "风格迁移提示词",
+    "content": "将图片转换为特定艺术风格的提示词...",
+    "category": "质量提示词模版",
+    "tags": ["风格迁移"],
     "date": "2026-03-09"
   }
 ]

@@ -3,13 +3,8 @@ import fs from 'node:fs';
 
 const prompts = JSON.parse(fs.readFileSync('./data/prompts.json', 'utf-8'));
 
-// 按分类组织数据
+// 获取所有大分类
 const categories = [...new Set(prompts.map((p: any) => p.category))];
-const categoryData: Record<string, any> = {};
-
-categories.forEach((cat: string) => {
-  categoryData[cat] = [...new Set(prompts.filter((p: any) => p.category === cat).map((p: any) => p.tags?.[0]).filter(Boolean))];
-});
 ---
 
 <!DOCTYPE html>
@@ -26,37 +21,40 @@ categories.forEach((cat: string) => {
     }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
       min-height: 100vh;
       padding: 40px 20px;
     }
     .container {
-      max-width: 1200px;
+      max-width: 1000px;
       margin: 0 auto;
     }
     h1 {
       text-align: center;
       color: #fff;
-      font-size: 2.5rem;
-      margin-bottom: 40px;
-      text-shadow: 0 0 20px rgba(100, 200, 255, 0.5);
+      font-size: 2.8rem;
+      margin-bottom: 50px;
+      text-shadow: 0 0 30px rgba(100, 200, 255, 0.5);
+      letter-spacing: 4px;
     }
     
     /* 返回按钮 */
     .back-btn {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.15);
       color: #fff;
       border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 10px 20px;
-      border-radius: 8px;
+      padding: 12px 24px;
+      border-radius: 25px;
       cursor: pointer;
-      font-size: 0.9rem;
-      margin-bottom: 20px;
+      font-size: 0.95rem;
+      margin-bottom: 30px;
       transition: all 0.3s;
       display: none;
+      backdrop-filter: blur(10px);
     }
     .back-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateX(-5px);
     }
     .back-btn.visible {
       display: inline-block;
@@ -67,146 +65,190 @@ categories.forEach((cat: string) => {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 24px;
-      margin-bottom: 40px;
+      animation: fadeIn 0.5s ease;
     }
     .category-btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
       color: #fff;
-      border: none;
-      padding: 30px 24px;
-      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 40px 30px;
+      border-radius: 20px;
       cursor: pointer;
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       font-weight: 600;
-      transition: all 0.3s;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
     }
     .category-btn:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+      background: linear-gradient(135deg, rgba(102, 126, 234, 1) 0%, rgba(118, 75, 162, 1) 100%);
+    }
+    .category-btn .icon {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 12px;
     }
     
     /* 子分类按钮 */
     .sub-category-grid {
       display: none;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 16px;
-      margin-bottom: 30px;
+      margin-bottom: 40px;
+      animation: slideUp 0.4s ease;
     }
     .sub-category-grid.visible {
       display: grid;
     }
     .sub-category-btn {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.1);
       color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 16px 24px;
-      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 18px 24px;
+      border-radius: 14px;
       cursor: pointer;
       font-size: 1rem;
       transition: all 0.3s;
+      backdrop-filter: blur(10px);
     }
     .sub-category-btn:hover {
-      background: rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.2);
       transform: translateY(-3px);
     }
     .sub-category-btn.active {
       background: linear-gradient(135deg, #00c6ff, #0072ff);
       border-color: transparent;
+      box-shadow: 0 8px 25px rgba(0, 198, 255, 0.4);
     }
     
     /* 提示词卡片 */
     .prompts-grid {
       display: none;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
       gap: 24px;
     }
     .prompts-grid.visible {
       display: grid;
+      animation: fadeIn 0.5s ease;
     }
     .card {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 16px;
-      padding: 24px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      transition: transform 0.3s, box-shadow 0.3s;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: all 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      opacity: 0;
+      transition: opacity 0.3s;
     }
     .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      border-color: rgba(0, 198, 255, 0.3);
+    }
+    .card:hover::before {
+      opacity: 1;
     }
     .card h2 {
       color: #fff;
-      font-size: 1.3rem;
-      margin-bottom: 12px;
-      padding-right: 80px;
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+      padding-right: 100px;
+      font-weight: 600;
     }
     .card .content {
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 0.95rem;
-      line-height: 1.6;
-      margin-bottom: 16px;
-      padding: 12px;
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 8px;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      margin-bottom: 20px;
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
       white-space: pre-wrap;
       word-break: break-word;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+    .card .content::-webkit-scrollbar {
+      width: 6px;
+    }
+    .card .content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 3px;
     }
     .card .meta {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
       align-items: center;
     }
     .category-tag {
       background: linear-gradient(135deg, #667eea, #764ba2);
       color: #fff;
-      padding: 4px 12px;
+      padding: 5px 14px;
       border-radius: 20px;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
+      font-weight: 500;
     }
     .tag {
-      background: rgba(255, 255, 255, 0.2);
-      color: #fff;
-      padding: 4px 10px;
-      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.8);
+      padding: 5px 12px;
+      border-radius: 15px;
       font-size: 0.75rem;
     }
     .date {
-      color: rgba(255, 255, 255, 0.5);
-      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.75rem;
       margin-left: auto;
     }
     
     /* 复制按钮 */
     .copy-btn {
       position: absolute;
-      top: 16px;
-      right: 16px;
+      top: 20px;
+      right: 20px;
       background: linear-gradient(135deg, #00c6ff, #0072ff);
       color: #fff;
       border: none;
-      padding: 8px 14px;
-      border-radius: 8px;
+      padding: 8px 16px;
+      border-radius: 20px;
       cursor: pointer;
       font-size: 0.8rem;
       transition: all 0.3s;
       z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
     .copy-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 15px rgba(0, 198, 255, 0.4);
+      transform: scale(1.08);
+      box-shadow: 0 5px 20px rgba(0, 198, 255, 0.5);
     }
     .copy-btn.copied {
       background: linear-gradient(135deg, #11998e, #38ef7d);
     }
     
-    .empty {
-      text-align: center;
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 1.2rem;
-      padding: 60px;
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -219,11 +261,18 @@ categories.forEach((cat: string) => {
     
     <!-- 第一层：大分类 -->
     <div class="category-grid" id="categoryGrid">
-      {categories.map((category: string) => (
-        <button class="category-btn" onclick={`showSubCategories('${category}')`}>
-          {category}
-        </button>
-      ))}
+      <button class="category-btn" onclick="showSubCategories('文生图提示词模版')">
+        <span class="icon">✏️</span>
+        文生图提示词模版
+      </button>
+      <button class="category-btn" onclick="showSubCategories('图生视频提示词模版')">
+        <span class="icon">🎬</span>
+        图生视频提示词模版
+      </button>
+      <button class="category-btn" onclick="showSubCategories('质量提示词模版')">
+        <span class="icon">✨</span>
+        质量提示词模版
+      </button>
     </div>
     
     <!-- 第二层：子分类 -->
@@ -233,7 +282,16 @@ categories.forEach((cat: string) => {
     <div class="prompts-grid" id="promptsGrid"></div>
   </div>
 
-  <script define:vars={{ prompts, categoryData }}>
+  <script define:vars={{ prompts }}>
+    const categoryData = {};
+    
+    // 构建分类数据
+    prompts.forEach(p => {
+      if (!categoryData[p.category]) {
+        categoryData[p.category] = [...new Set(p.tags || [])];
+      }
+    });
+    
     let currentLevel = 0;
     let currentCategory = '';
     let currentSubCategory = '';
@@ -241,7 +299,6 @@ categories.forEach((cat: string) => {
     function showSubCategories(category) {
       currentLevel = 1;
       currentCategory = category;
-      currentSubCategory = '';
       
       // 隐藏大分类，显示子分类
       document.getElementById('categoryGrid').style.display = 'none';
@@ -252,9 +309,15 @@ categories.forEach((cat: string) => {
       // 渲染子分类
       const subCategories = categoryData[category] || [];
       const subGrid = document.getElementById('subCategoryGrid');
-      subGrid.innerHTML = subCategories.map(sub => 
-        `<button class="sub-category-btn" onclick="showPrompts('${sub}')">${sub}</button>`
-      ).join('');
+      
+      if (subCategories.length === 0) {
+        // 如果没有子分类，直接显示该分类下的所有卡片
+        showPrompts('');
+      } else {
+        subGrid.innerHTML = subCategories.map(sub => 
+          `<button class="sub-category-btn" onclick="showPrompts('${sub}')">${sub}</button>`
+        ).join('');
+      }
       
       // 清除卡片
       document.getElementById('promptsGrid').innerHTML = '';
@@ -274,12 +337,15 @@ categories.forEach((cat: string) => {
       });
       
       // 渲染卡片
-      const filtered = prompts.filter(p => p.category === currentCategory && p.tags?.[0] === subCategory);
+      const filtered = subCategory 
+        ? prompts.filter(p => p.category === currentCategory && p.tags?.includes(subCategory))
+        : prompts.filter(p => p.category === currentCategory);
+      
       const grid = document.getElementById('promptsGrid');
       
       grid.innerHTML = filtered.map((prompt, index) => `
         <div class="card">
-          <button class="copy-btn" onclick="copyContent(this, ${index})">📋 一键复制</button>
+          <button class="copy-btn" onclick="copyContent(this)">📋 复制</button>
           <h2>${prompt.title}</h2>
           <div class="content">${prompt.content}</div>
           <div class="meta">
@@ -289,6 +355,10 @@ categories.forEach((cat: string) => {
           </div>
         </div>
       `).join('');
+      
+      if (filtered.length === 0) {
+        grid.innerHTML = '<div class="empty">暂无提示词</div>';
+      }
     }
     
     function goBack() {
@@ -296,7 +366,14 @@ categories.forEach((cat: string) => {
         // 从卡片返回子分类
         currentLevel = 1;
         document.getElementById('promptsGrid').classList.remove('visible');
-        document.getElementById('subCategoryGrid').classList.add('visible');
+        
+        const subCategories = categoryData[currentCategory] || [];
+        if (subCategories.length > 0) {
+          document.getElementById('subCategoryGrid').classList.add('visible');
+        } else {
+          document.getElementById('categoryGrid').style.display = 'grid';
+          document.getElementById('backBtn').classList.remove('visible');
+        }
       } else if (currentLevel === 1) {
         // 从子分类返回大分类
         currentLevel = 0;
@@ -308,13 +385,13 @@ categories.forEach((cat: string) => {
       currentSubCategory = '';
     }
     
-    function copyContent(btn, index) {
+    function copyContent(btn) {
       const card = btn.closest('.card');
       const content = card.querySelector('.content').textContent;
       
       navigator.clipboard.writeText(content).then(() => {
         const originalText = btn.textContent;
-        btn.textContent = '✅ 已复制!';
+        btn.textContent = '✓ 已复制';
         btn.classList.add('copied');
         
         setTimeout(() => {
@@ -323,10 +400,6 @@ categories.forEach((cat: string) => {
         }, 2000);
       }).catch(err => {
         console.error('复制失败:', err);
-        btn.textContent = '❌ 复制失败';
-        setTimeout(() => {
-          btn.textContent = '📋 一键复制';
-        }, 2000);
       });
     }
   </script>
