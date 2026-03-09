@@ -492,26 +492,26 @@ const featuredPrompts = prompts.slice(0, 4);
     }
     
     .prompt-card-header {
-      padding: 24px 24px 16px;
+      padding: 24px 24px 20px;
       position: relative;
+      background: linear-gradient(180deg, rgba(139, 92, 246, 0.08) 0%, transparent 100%);
+      border-bottom: 1px solid var(--border-subtle);
     }
     
     .prompt-card-header::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--accent-violet), var(--accent-pink));
+      display: none;
     }
     
     .prompt-title {
-      font-size: 1.15rem;
-      font-weight: 600;
-      margin-bottom: 8px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0;
       padding-right: 80px;
       line-height: 1.4;
+      background: linear-gradient(135deg, #fff 0%, #e2e8f0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
     
     .prompt-actions {
@@ -523,20 +523,24 @@ const featuredPrompts = prompts.slice(0, 4);
     }
     
     .action-btn {
-      padding: 8px 16px;
+      padding: 10px 20px;
       background: linear-gradient(135deg, var(--accent-violet), var(--accent-pink));
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       color: #fff;
-      font-size: 0.8rem;
-      font-weight: 500;
+      font-size: 0.85rem;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
     }
     
     .action-btn:hover {
       transform: scale(1.05);
-      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+      box-shadow: 0 6px 24px rgba(139, 92, 246, 0.5);
     }
     
     .action-btn.copied {
@@ -544,20 +548,37 @@ const featuredPrompts = prompts.slice(0, 4);
     }
     
     .prompt-content {
-      padding: 0 24px 20px;
+      padding: 20px 24px 24px;
     }
     
     .prompt-text {
-      padding: 18px;
-      background: rgba(0,0,0,0.3);
-      border-radius: 14px;
+      padding: 20px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
       font-size: 0.85rem;
-      line-height: 1.8;
+      line-height: 1.9;
       color: var(--text-secondary);
-      max-height: 140px;
+      max-height: 160px;
       overflow-y: auto;
-      font-family: 'JetBrains Mono', 'SF Mono', monospace;
-      border-left: 3px solid var(--accent-violet);
+      font-family: 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+      border-left: 4px solid var(--accent-violet);
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
+      position: relative;
+    }
+    
+    .prompt-text::before {
+      content: '📝 提示词内容';
+      position: absolute;
+      top: -10px;
+      left: 16px;
+      padding: 2px 10px;
+      background: var(--accent-violet);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 600;
+      border-radius: 8px;
+      font-family: 'Noto Sans SC', sans-serif;
     }
     
     .prompt-text::-webkit-scrollbar {
@@ -576,17 +597,39 @@ const featuredPrompts = prompts.slice(0, 4);
     .prompt-meta {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 16px;
+      gap: 10px;
+      margin-top: 20px;
       padding-top: 16px;
-      border-top: 1px solid var(--border-subtle);
+      border-top: 1px dashed var(--border-subtle);
     }
     
     .meta-tag {
-      padding: 6px 14px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 20px;
-      font-size: 0.75rem;
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 24px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+      transition: all 0.2s ease;
+    }
+    
+    .meta-tag:hover {
+      border-color: var(--accent-violet);
+      color: var(--text-secondary);
+    }
+    
+    .meta-tag.primary {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(236, 72, 153, 0.25));
+      color: #c4b5fd;
+      border-color: rgba(139, 92, 246, 0.4);
+      font-weight: 500;
+    }
+    
+    .meta-tag.category {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(6, 182, 212, 0.1));
+      color: #67e8f9;
+      border-color: rgba(6, 182, 212, 0.3);
+    }
       color: var(--text-muted);
       border: 1px solid transparent;
       transition: all 0.2s ease;
