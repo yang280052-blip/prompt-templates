@@ -1,6 +1,7 @@
 ---
-import promptsData from '../data/prompts.json';
-const prompts = promptsData;
+import fs from 'node:fs';
+
+const prompts = JSON.parse(fs.readFileSync('./data/prompts.json', 'utf-8'));
 ---
 
 <!DOCTYPE html>
