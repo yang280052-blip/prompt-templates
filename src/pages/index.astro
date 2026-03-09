@@ -15,6 +15,9 @@ categories.forEach((cat: string) => {
   });
   categorySubs[cat] = Array.from(tags);
 });
+
+// 精选提示词（取前4个）
+const featuredPrompts = prompts.slice(0, 4);
 ---
 
 <!DOCTYPE html>
@@ -22,7 +25,8 @@ categories.forEach((cat: string) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎨 提示词模板库</title>
+  <title>🎨 提示词模板库 | AI创作必备</title>
+  <meta name="description" content="精选高质量AI提示词模板，文生图、图生视频、质量优化，一键复制即用">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -32,155 +36,128 @@ categories.forEach((cat: string) => {
     :root {
       --bg-primary: #0a0a0f;
       --bg-secondary: #12121a;
-      --accent-primary: #8b5cf6;
-      --accent-secondary: #ec4899;
-      --accent-tertiary: #06b6d4;
+      --bg-card: #16161f;
+      --accent-violet: #8b5cf6;
+      --accent-pink: #ec4899;
+      --accent-cyan: #06b6d4;
+      --accent-amber: #f59e0b;
+      --accent-emerald: #10b981;
       --text-primary: #f8fafc;
       --text-secondary: #94a3b8;
-      --glass-bg: rgba(255, 255, 255, 0.05);
-      --glass-border: rgba(255, 255, 255, 0.1);
-      --glass-hover: rgba(255, 255, 255, 0.08);
+      --text-muted: #64748b;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-active: rgba(139, 92, 246, 0.5);
     }
     
     body {
       font-family: 'Noto Sans SC', 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg-primary);
+      color: var(--text-primary);
       min-height: 100vh;
-      padding: 40px 20px;
       overflow-x: hidden;
     }
     
-    /* 动态背景 */
-    .bg-effects {
+    /* 背景 */
+    .bg {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
+      inset: 0;
+      z-index: -1;
       overflow: hidden;
     }
     
-    .bg-effects::before {
+    .bg::before {
       content: '';
       position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
+      top: -60%;
+      left: -30%;
+      width: 160%;
+      height: 160%;
       background: 
-        radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.12) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.08) 0%, transparent 60%);
-      animation: bgShift 20s ease-in-out infinite;
+        radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.18) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 60%, rgba(236, 72, 153, 0.12) 0%, transparent 45%),
+        radial-gradient(ellipse at 60% 90%, rgba(6, 182, 212, 0.1) 0%, transparent 40%);
+      animation: bgMove 25s ease-in-out infinite;
     }
     
-    @keyframes bgShift {
+    @keyframes bgMove {
       0%, 100% { transform: translate(0, 0) rotate(0deg); }
-      33% { transform: translate(2%, 2%) rotate(1deg); }
-      66% { transform: translate(-1%, 1%) rotate(-1deg); }
+      33% { transform: translate(3%, 2%) rotate(2deg); }
+      66% { transform: translate(-2%, 1%) rotate(-1deg); }
     }
     
-    /* 浮动粒子 */
-    .particles {
+    .bg-grid {
       position: absolute;
-      width: 100%;
-      height: 100%;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 70%);
     }
     
-    .particle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: rgba(139, 92, 246, 0.6);
-      border-radius: 50%;
-      animation: float 15s infinite ease-in-out;
-    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
     
-    .particle:nth-child(2) { left: 20%; animation-delay: -2s; background: rgba(236, 72, 153, 0.5); }
-    .particle:nth-child(3) { left: 40%; animation-delay: -4s; background: rgba(6, 182, 212, 0.5); }
-    .particle:nth-child(4) { left: 60%; animation-delay: -6s; }
-    .particle:nth-child(5) { left: 80%; animation-delay: -8s; background: rgba(236, 72, 153, 0.4); }
-    .particle:nth-child(6) { left: 10%; animation-delay: -10s; background: rgba(6, 182, 212, 0.4); }
-    .particle:nth-child(7) { left: 70%; animation-delay: -12s; }
-    .particle:nth-child(8) { left: 90%; animation-delay: -14s; background: rgba(139, 92, 246, 0.4); }
-    
-    @keyframes float {
-      0%, 100% { transform: translateY(100vh) scale(0); opacity: 0; }
-      10% { opacity: 1; transform: translateY(80vh) scale(1); }
-      90% { opacity: 1; transform: translateY(10vh) scale(0.8); }
-      100% { transform: translateY(-10vh) scale(0); opacity: 0; }
-    }
-    
-    .container { 
-      max-width: 1200px; 
-      margin: 0 auto; 
-      position: relative;
-      z-index: 1;
-    }
-    
-    /* 主标题 */
-    h1 {
+    /* Header */
+    header {
       text-align: center;
-      color: var(--text-primary);
-      font-size: 3rem;
+      padding: 60px 0 50px;
+      animation: fadeInDown 0.8s ease-out;
+    }
+    
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .logo-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--accent-violet), var(--accent-pink));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      box-shadow: 0 8px 32px rgba(139, 92, 246, 0.4);
+    }
+    
+    h1 {
+      font-size: 3.2rem;
       font-weight: 700;
-      margin-bottom: 12px;
-      letter-spacing: 2px;
-      background: linear-gradient(135deg, #fff 0%, #a5b4fc 50%, #f472b6 100%);
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #fff 20%, #c4b5fd 50%, #f9a8d4 80%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      animation: titleGlow 3s ease-in-out infinite;
-    }
-    
-    @keyframes titleGlow {
-      0%, 100% { filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.3)); }
-      50% { filter: drop-shadow(0 0 30px rgba(236, 72, 153, 0.4)); }
+      letter-spacing: -0.5px;
     }
     
     .subtitle {
-      text-align: center;
+      font-size: 1.2rem;
       color: var(--text-secondary);
-      font-size: 1.1rem;
-      margin-bottom: 50px;
-      font-weight: 300;
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.6;
     }
     
-    /* 返回按钮 */
-    .back-btn {
-      background: var(--glass-bg);
-      backdrop-filter: blur(10px);
-      color: var(--text-primary);
-      border: 1px solid var(--glass-border);
-      padding: 12px 24px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 0.95rem;
-      margin-bottom: 30px;
-      transition: all 0.3s ease;
-      display: none;
-      opacity: 0;
-      transform: translateX(-20px);
-    }
-    .back-btn.visible { 
-      display: inline-block; 
-      opacity: 1;
-      transform: translateX(0);
-    }
-    .back-btn:hover {
-      background: var(--glass-hover);
-      border-color: var(--accent-primary);
-      box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-    }
-    
-    /* 分类网格 */
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 24px;
-      animation: fadeInUp 0.6s ease-out;
+    /* 统计 */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 40px;
+      padding: 24px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 20px;
+      border: 1px solid var(--border-subtle);
+      animation: fadeInUp 0.8s ease-out 0.2s backwards;
     }
     
     @keyframes fadeInUp {
@@ -188,286 +165,459 @@ categories.forEach((cat: string) => {
       to { opacity: 1; transform: translateY(0); }
     }
     
-    .category-btn {
-      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(236, 72, 153, 0.15) 100%);
-      backdrop-filter: blur(20px);
-      color: var(--text-primary);
-      border: 1px solid var(--glass-border);
-      padding: 50px 36px;
-      border-radius: 24px;
-      cursor: pointer;
-      font-size: 1.25rem;
-      font-weight: 600;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      position: relative;
-      overflow: hidden;
+    .stat {
+      text-align: center;
     }
     
-    .category-btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-      transition: left 0.5s;
-    }
-    
-    .category-btn:hover::before {
-      left: 100%;
-    }
-    
-    .category-btn:hover {
-      transform: translateY(-8px) scale(1.02);
-      border-color: var(--accent-primary);
-      box-shadow: 
-        0 20px 40px rgba(139, 92, 246, 0.3),
-        0 0 60px rgba(139, 92, 246, 0.15);
-    }
-    
-    .category-btn .icon { 
-      font-size: 2.5rem; 
-      display: block; 
-      margin-bottom: 16px;
-      filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.5));
-    }
-    
-    .category-btn .label {
-      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-violet), var(--accent-cyan));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
     
-    /* 子分类 - 全新设计 */
-    .sub-category-grid {
-      display: none;
-      gap: 16px;
-      margin-bottom: 40px;
-      flex-wrap: wrap;
-      animation: fadeInUp 0.4s ease-out;
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 4px;
     }
-    .sub-category-grid.visible { display: flex; }
     
-    .sub-category-btn {
-      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-      backdrop-filter: blur(15px);
-      color: var(--text-secondary);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 16px 28px;
-      border-radius: 16px;
+    /* 分类网格 */
+    .category-section {
+      margin-top: 50px;
+    }
+    
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(180deg, var(--accent-violet), var(--accent-pink));
+      border-radius: 2px;
+    }
+    
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 20px;
+    }
+    
+    .category-card {
+      background: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      padding: 32px;
       cursor: pointer;
-      font-size: 0.95rem;
-      font-weight: 500;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
+      animation: fadeInUp 0.6s ease-out backwards;
     }
     
-    .sub-category-btn::before {
+    .category-card:nth-child(1) { animation-delay: 0.1s; }
+    .category-card:nth-child(2) { animation-delay: 0.2s; }
+    .category-card:nth-child(3) { animation-delay: 0.3s; }
+    
+    .category-card::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, var(--accent-tertiary), var(--accent-primary));
+      background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.03) 100%);
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.3s;
     }
     
-    .sub-category-btn:hover { 
-      color: var(--text-primary);
-      border-color: var(--accent-tertiary);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(6, 182, 212, 0.25);
-    }
-    .sub-category-btn.active { 
-      background: linear-gradient(135deg, var(--accent-tertiary), var(--accent-primary));
-      color: #fff;
-      border-color: transparent;
-      box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+    .category-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: var(--border-active);
+      box-shadow: 
+        0 24px 48px rgba(0,0,0,0.4),
+        0 0 60px rgba(139, 92, 246, 0.15);
     }
     
-    /* 提示词卡片 - 全新设计 */
-    .prompts-grid {
-      display: none;
-      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-      gap: 24px;
-      animation: fadeInUp 0.5s ease-out;
+    .category-card:hover::before {
+      opacity: 1;
     }
-    .prompts-grid.visible { display: grid; }
     
-    .card {
-      background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
-      backdrop-filter: blur(20px);
-      border-radius: 24px;
-      padding: 0;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      position: relative;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      animation: cardFadeIn 0.5s ease-out backwards;
+    .category-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+    }
+    
+    .category-card:nth-child(1) .category-icon {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.1));
+      box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
+    }
+    
+    .category-card:nth-child(2) .category-icon {
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(236, 72, 153, 0.1));
+      box-shadow: 0 8px 24px rgba(236, 72, 153, 0.3);
+    }
+    
+    .category-card:nth-child(3) .category-icon {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(6, 182, 212, 0.1));
+      box-shadow: 0 8px 24px rgba(6, 182, 212, 0.3);
+    }
+    
+    .category-name {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .category-desc {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    .category-count {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 6px 14px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    
+    /* 精选区域 */
+    .featured-section {
+      margin-top: 60px;
+    }
+    
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    
+    .featured-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 24px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      animation: fadeInUp 0.6s ease-out backwards;
+    }
+    
+    .featured-card:nth-child(1) { animation-delay: 0.2s; }
+    .featured-card:nth-child(2) { animation-delay: 0.3s; }
+    .featured-card:nth-child(3) { animation-delay: 0.4s; }
+    .featured-card:nth-child(4) { animation-delay: 0.5s; }
+    
+    .featured-card:hover {
+      border-color: var(--accent-violet);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 32px rgba(0,0,0,0.3);
+    }
+    
+    .featured-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      background: linear-gradient(135deg, var(--accent-violet), var(--accent-pink));
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    
+    .featured-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+    
+    .featured-preview {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
       overflow: hidden;
     }
     
-    .card::before {
+    /* 子分类页面 */
+    .sub-category-page {
+      display: none;
+    }
+    
+    .sub-category-page.active {
+      display: block;
+      animation: fadeIn 0.4s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .back-btn:hover {
+      background: rgba(255,255,255,0.1);
+      color: var(--text-primary);
+      border-color: var(--accent-violet);
+    }
+    
+    .page-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    
+    .page-title .icon {
+      margin-right: 12px;
+    }
+    
+    /* 标签云 */
+    .tags-container {
+      margin-bottom: 32px;
+    }
+    
+    .tags-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    
+    .tag-btn {
+      padding: 12px 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .tag-btn:hover {
+      border-color: var(--accent-cyan);
+      color: var(--text-primary);
+      transform: translateY(-2px);
+    }
+    
+    .tag-btn.active {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(6, 182, 212, 0.3);
+    }
+    
+    .tag-count {
+      padding: 2px 8px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 10px;
+      font-size: 0.75rem;
+    }
+    
+    /* 提示词卡片 */
+    .prompts-container {
+      display: none;
+    }
+    
+    .prompts-container.active {
+      display: block;
+    }
+    
+    .prompts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 20px;
+    }
+    
+    .prompt-card {
+      background: linear-gradient(145deg, var(--bg-card), rgba(22, 22, 31, 0.8));
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: cardIn 0.5s ease-out backwards;
+    }
+    
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    
+    .prompt-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--accent-violet);
+      box-shadow: 
+        0 20px 40px rgba(0,0,0,0.4),
+        0 0 40px rgba(139, 92, 246, 0.12);
+    }
+    
+    .prompt-card-header {
+      padding: 24px 24px 16px;
+      position: relative;
+    }
+    
+    .prompt-card-header::before {
       content: '';
       position: absolute;
       top: 0;
       left: 0;
-      width: 4px;
-      height: 100%;
-      background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary));
-      opacity: 0.8;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-violet), var(--accent-pink));
     }
     
-    @keyframes cardFadeIn {
-      from { opacity: 0; transform: translateY(20px) scale(0.95); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    
-    .card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(139, 92, 246, 0.4);
-      box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.35),
-        0 0 40px rgba(139, 92, 246, 0.15);
-    }
-    
-    .card-inner {
-      padding: 28px;
-      padding-left: 32px;
-    }
-    
-    .card h2 { 
-      color: var(--text-primary); 
-      font-size: 1.2rem; 
-      margin-bottom: 16px; 
-      padding-right: 100px;
+    .prompt-title {
+      font-size: 1.15rem;
       font-weight: 600;
+      margin-bottom: 8px;
+      padding-right: 80px;
       line-height: 1.4;
-      background: linear-gradient(135deg, #fff 0%, #e2e8f0 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
     }
     
-    .card .content {
-      color: var(--text-secondary);
-      font-size: 0.875rem;
-      line-height: 1.8;
-      margin-bottom: 20px;
-      padding: 18px;
-      background: rgba(0, 0, 0, 0.35);
-      border-radius: 14px;
-      white-space: pre-wrap;
-      max-height: 150px;
-      overflow-y: auto;
-      border-left: 3px solid var(--accent-primary);
-      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+    .prompt-actions {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 8px;
+    }
+    
+    .action-btn {
+      padding: 8px 16px;
+      background: linear-gradient(135deg, var(--accent-violet), var(--accent-pink));
+      border: none;
+      border-radius: 10px;
+      color: #fff;
       font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
     
-    .card .content::-webkit-scrollbar {
+    .action-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+    }
+    
+    .action-btn.copied {
+      background: linear-gradient(135deg, var(--accent-emerald), #059669);
+    }
+    
+    .prompt-content {
+      padding: 0 24px 20px;
+    }
+    
+    .prompt-text {
+      padding: 18px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 14px;
+      font-size: 0.85rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      max-height: 140px;
+      overflow-y: auto;
+      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+      border-left: 3px solid var(--accent-violet);
+    }
+    
+    .prompt-text::-webkit-scrollbar {
       width: 5px;
     }
     
-    .card .content::-webkit-scrollbar-track {
-      background: rgba(255,255,255,0.05);
+    .prompt-text::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    .prompt-text::-webkit-scrollbar-thumb {
+      background: var(--accent-violet);
       border-radius: 3px;
     }
     
-    .card .content::-webkit-scrollbar-thumb {
-      background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary));
-      border-radius: 3px;
-    }
-    
-    .card .meta { 
-      display: flex; 
-      gap: 10px; 
+    .prompt-meta {
+      display: flex;
       flex-wrap: wrap;
-      align-items: center;
-      padding-top: 8px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-subtle);
     }
     
-    .category-tag {
-      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-      color: #fff;
+    .meta-tag {
       padding: 6px 14px;
+      background: rgba(255,255,255,0.06);
       border-radius: 20px;
       font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.3px;
-      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-    }
-    
-    .tag {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text-secondary);
-      padding: 6px 14px;
-      border-radius: 16px;
-      font-size: 0.75rem;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      border: 1px solid transparent;
       transition: all 0.2s ease;
     }
     
-    .tag:hover {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: var(--accent-tertiary);
+    .meta-tag:hover {
+      border-color: var(--accent-violet);
     }
     
-    .date {
-      color: var(--text-secondary);
-      font-size: 0.75rem;
-      margin-left: auto;
-      opacity: 0.6;
-      font-family: monospace;
+    .meta-tag.primary {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+      color: #c4b5fd;
+      border-color: rgba(139, 92, 246, 0.3);
     }
     
-    .copy-btn {
-      position: absolute;
-      top: 24px;
-      right: 24px;
-      background: linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(236, 72, 153, 0.9) 100%);
-      color: #fff;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      font-weight: 600;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-      z-index: 10;
-    }
-    
-    .copy-btn:hover {
-      transform: scale(1.08);
-      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
-    }
-    
-    .copy-btn.copied {
-      background: linear-gradient(135deg, #10b981, #059669);
-    }
-    
-    /* Toast 提示 */
+    /* Toast */
     .toast {
       position: fixed;
       bottom: 30px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
-      background: linear-gradient(135deg, #10b981, #059669);
+      padding: 16px 32px;
+      background: linear-gradient(135deg, var(--accent-emerald), #059669);
       color: #fff;
-      padding: 14px 28px;
-      border-radius: 12px;
+      border-radius: 14px;
       font-size: 0.95rem;
       font-weight: 500;
       z-index: 1000;
       opacity: 0;
       transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+      box-shadow: 0 12px 40px rgba(16, 185, 129, 0.4);
     }
     
     .toast.show {
@@ -477,183 +627,244 @@ categories.forEach((cat: string) => {
     
     /* 响应式 */
     @media (max-width: 768px) {
-      body { padding: 24px 16px; }
-      h1 { font-size: 2rem; }
-      .subtitle { font-size: 0.95rem; margin-bottom: 32px; }
-      .category-grid { grid-template-columns: 1fr; gap: 16px; }
-      .category-btn { padding: 32px 24px; font-size: 1.1rem; }
-      .category-btn .icon { font-size: 2rem; }
-      .sub-category-btn { padding: 12px 20px; font-size: 0.9rem; }
-      .prompts-grid { grid-template-columns: 1fr; gap: 16px; }
-      .card-inner { padding: 20px; padding-left: 24px; }
-      .card h2 { padding-right: 70px; font-size: 1rem; }
-      .card .content { max-height: 120px; padding: 14px; font-size: 0.75rem; }
-      .copy-btn { top: 16px; right: 16px; padding: 8px 14px; font-size: 0.75rem; }
-      .card::before { width: 3px; }
+      .container { padding: 24px 16px; }
+      header { padding: 40px 0 32px; }
+      h1 { font-size: 2.2rem; }
+      .subtitle { font-size: 1rem; }
+      .stats { gap: 20px; padding: 16px; }
+      .stat-value { font-size: 1.5rem; }
+      .category-grid { grid-template-columns: 1fr; }
+      .category-card { padding: 24px; }
+      .featured-grid { grid-template-columns: 1fr; }
+      .prompts-grid { grid-template-columns: 1fr; }
+      .prompt-title { font-size: 1rem; padding-right: 70px; }
+      .prompt-card-header, .prompt-content { padding-left: 20px; padding-right: 20px; }
     }
   </style>
 </head>
 <body>
-  <!-- 背景效果 -->
-  <div class="bg-effects">
-    <div class="particles">
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-    </div>
+  <!-- 背景 -->
+  <div class="bg">
+    <div class="bg-grid"></div>
   </div>
   
   <div class="container">
-    <h1>🎨 提示词模板库</h1>
-    <p class="subtitle">AI创作，从一个好的提示词开始</p>
-    
-    <button class="back-btn" id="backBtn">← 返回上一级</button>
-    
-    <!-- 大分类 -->
-    <div class="category-grid" id="categoryGrid">
-      {categories.map((cat: string, index: number) => (
-        <button 
-          class="category-btn" 
-          data-cat={cat}
-          style={`animation-delay: ${index * 0.1}s`}
-        >
-          <span class="icon">
-            {cat === '文生图提示词模版' ? '✏️' : cat === '图生视频提示词模版' ? '🎬' : '✨'}
-          </span>
-          <span class="label">{cat}</span>
-        </button>
-      ))}
+    <!-- 首页 -->
+    <div id="homePage">
+      <header>
+        <div class="logo">
+          <div class="logo-icon">🎨</div>
+        </div>
+        <h1>提示词模板库</h1>
+        <p class="subtitle">AI创作从一个好的提示词开始 • 精选高质量提示词，一键复制即用</p>
+        
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-value">8+</div>
+            <div class="stat-label">精选模板</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">3</div>
+            <div class="stat-label">专业分类</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">100%</div>
+            <div class="stat-label">免费使用</div>
+          </div>
+        </div>
+      </header>
+      
+      <!-- 分类 -->
+      <section class="category-section">
+        <h2 class="section-title">选择分类</h2>
+        <div class="category-grid" id="categoryGrid">
+          <div class="category-card" data-cat="文生图提示词模版">
+            <div class="category-icon">✏️</div>
+            <div class="category-name">文生图提示词</div>
+            <div class="category-desc">角色设计、场景构建、风格迁移等专业图像生成提示词</div>
+            <span class="category-count">4 个模板</span>
+          </div>
+          <div class="category-card" data-cat="图生视频提示词模版">
+            <div class="category-icon">🎬</div>
+            <div class="category-name">图生视频提示词</div>
+            <div class="category-desc">静态图片转视频、动作生成、运镜控制等专业视频提示词</div>
+            <span class="category-count">2 个模板</span>
+          </div>
+          <div class="category-card" data-cat="质量提示词模版">
+            <div class="category-icon">✨</div>
+            <div class="category-name">质量优化提示词</div>
+            <div class="category-desc">画质增强、风格迁移、细节优化等专业级质量提升提示词</div>
+            <span class="category-count">2 个模板</span>
+          </div>
+        </div>
+      </section>
+      
+      <!-- 精选 -->
+      <section class="featured-section">
+        <h2 class="section-title">精选提示词</h2>
+        <div class="featured-grid" id="featuredGrid">
+          {featuredPrompts.map((p: any, i: number) => (
+            <div class="featured-card" data-cat={p.category} data-idx={i}>
+              <span class="featured-tag">{(p.tags || [])[0] || '提示词'}</span>
+              <div class="featured-title">{p.title}</div>
+              <div class="featured-preview">{p.content.substring(0, 120)}...</div>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
     
-    <!-- 子分类 -->
-    <div class="sub-category-grid" id="subCategoryGrid"></div>
-    
-    <!-- 提示词卡片 -->
-    <div class="prompts-grid" id="promptsGrid"></div>
+    <!-- 子分类页 -->
+    <div id="subCategoryPage" class="sub-category-page">
+      <div class="page-header">
+        <button class="back-btn" id="backBtn">← 返回首页</button>
+        <h2 class="page-title"><span class="page-icon"></span><span class="page-name"></span></h2>
+      </div>
+      
+      <div class="tags-container">
+        <div class="tags-list" id="tagsList"></div>
+      </div>
+      
+      <div class="prompts-container active">
+        <div class="prompts-grid" id="promptsGrid"></div>
+      </div>
+    </div>
   </div>
-
-  <!-- Toast 提示 -->
-  <div class="toast" id="toast">✓ 已复制到剪贴板</div>
+  
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
 
   <script define:vars={{ prompts, categorySubs }}>
-    let currentLevel = 0;
+    // 状态
+    let currentPage = 'home';
     let currentCategory = '';
     let currentSubCategory = '';
     
-    // Toast 显示
-    function showToast(message) {
+    // 分类配置
+    const categoryConfig = {
+      '文生图提示词模版': { icon: '✏️', desc: '文生图提示词', color: 'violet' },
+      '图生视频提示词模版': { icon: '🎬', desc: '图生视频提示词', color: 'pink' },
+      '质量提示词模版': { icon: '✨', desc: '质量优化提示词', color: 'cyan' }
+    };
+    
+    // Toast
+    function showToast(msg) {
       const toast = document.getElementById('toast');
-      toast.textContent = message;
+      toast.textContent = msg;
       toast.classList.add('show');
       setTimeout(() => toast.classList.remove('show'), 2500);
     }
     
-    // 大分类按钮点击
-    document.querySelectorAll('.category-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        showSub(this.dataset.cat);
+    // 首页 - 分类点击
+    document.querySelectorAll('.category-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const cat = card.dataset.cat;
+        enterSubCategory(cat);
+      });
+    });
+    
+    // 首页 - 精选卡片点击
+    document.querySelectorAll('.featured-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const cat = card.dataset.cat;
+        enterSubCategory(cat);
       });
     });
     
     // 返回按钮
     document.getElementById('backBtn').addEventListener('click', goBack);
     
-    function showSub(cat) {
-      currentLevel = 1;
+    // 进入子分类页
+    function enterSubCategory(cat) {
+      currentPage = 'sub';
       currentCategory = cat;
+      currentSubCategory = '';
       
-      document.getElementById('categoryGrid').style.display = 'none';
-      document.getElementById('subCategoryGrid').classList.add('visible');
-      document.getElementById('promptsGrid').classList.remove('visible');
-      document.getElementById('backBtn').classList.add('visible');
+      const config = categoryConfig[cat];
+      document.querySelector('.page-icon').textContent = config.icon;
+      document.querySelector('.page-name').textContent = config.desc;
       
+      // 显示子分类标签
       const subs = categorySubs[cat] || [];
-      const subGrid = document.getElementById('subCategoryGrid');
+      const tagsList = document.getElementById('tagsList');
       
-      if (subs.length === 0) {
-        showPrompts('');
-      } else {
-        subGrid.innerHTML = subs.map(sub => 
-          `<button class="sub-category-btn" data-sub="${sub}">${sub}</button>`
-        ).join('');
+      if (subs.length > 0) {
+        tagsList.innerHTML = `
+          <button class="tag-btn active" data-sub="">全部 <span class="tag-count">${prompts.filter(p => p.category === cat).length}</span></button>
+          ${subs.map(sub => `
+            <button class="tag-btn" data-sub="${sub}">${sub} <span class="tag-count">${prompts.filter(p => p.category === cat && (p.tags || []).includes(sub)).length}</span></button>
+          `).join('')}
+        `;
         
-        document.querySelectorAll('.sub-category-btn').forEach(btn => {
-          btn.addEventListener('click', function() {
-            document.querySelectorAll('.sub-category-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            showPrompts(this.dataset.sub);
+        document.querySelectorAll('.tag-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            showPrompts(btn.dataset.sub);
           });
         });
       }
+      
+      // 显示所有提示词
+      showPrompts('');
+      
+      // 切换页面
+      document.getElementById('homePage').style.display = 'none';
+      document.getElementById('subCategoryPage').classList.add('active');
+      window.scrollTo(0, 0);
     }
     
+    // 显示提示词
     function showPrompts(subCat) {
-      currentLevel = 2;
       currentSubCategory = subCat;
       
-      document.getElementById('subCategoryGrid').classList.remove('visible');
-      document.getElementById('promptsGrid').classList.add('visible');
-      
       const filtered = subCat 
-        ? prompts.filter(p => p.category === currentCategory && p.tags?.includes(subCat))
+        ? prompts.filter(p => p.category === currentCategory && (p.tags || []).includes(subCat))
         : prompts.filter(p => p.category === currentCategory);
       
       const grid = document.getElementById('promptsGrid');
-      grid.innerHTML = filtered.map((prompt, index) => `
-        <div class="card" style="animation-delay: ${index * 0.08}s">
-          <button class="copy-btn">📋 复制</button>
-          <div class="card-inner">
-            <h2>${prompt.title}</h2>
-            <div class="content">${prompt.content}</div>
-            <div class="meta">
-              <span class="category-tag">${prompt.category}</span>
-              ${(prompt.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('')}
-              <span class="date">${prompt.date}</span>
+      grid.innerHTML = filtered.map((prompt, i) => `
+        <div class="prompt-card" style="animation-delay: ${i * 0.08}s">
+          <div class="prompt-card-header">
+            <div class="prompt-actions">
+              <button class="action-btn copy-btn">📋 复制</button>
+            </div>
+            <h3 class="prompt-title">${prompt.title}</h3>
+          </div>
+          <div class="prompt-content">
+            <div class="prompt-text">${prompt.content}</div>
+            <div class="prompt-meta">
+              <span class="meta-tag primary">${prompt.category}</span>
+              ${(prompt.tags || []).map(tag => `<span class="meta-tag">${tag}</span>`).join('')}
+              <span class="meta-tag">${prompt.date}</span>
             </div>
           </div>
         </div>
       `).join('');
       
+      // 复制功能
       document.querySelectorAll('.copy-btn').forEach(btn => {
         btn.addEventListener('click', function() {
-          const content = this.closest('.card').querySelector('.content').textContent;
-          navigator.clipboard.writeText(content).then(() => {
+          const text = this.closest('.prompt-card').querySelector('.prompt-text').textContent;
+          navigator.clipboard.writeText(text).then(() => {
             this.classList.add('copied');
-            this.innerHTML = '✓ 已复制';
+            this.textContent = '✓ 已复制';
             showToast('提示词已复制到剪贴板！');
             setTimeout(() => {
               this.classList.remove('copied');
-              this.innerHTML = '📋 复制';
+              this.textContent = '📋 复制';
             }, 2000);
-          }).catch(() => {
-            showToast('复制失败，请手动复制');
           });
         });
       });
     }
     
+    // 返回
     function goBack() {
-      if (currentLevel === 2) {
-        currentLevel = 1;
-        document.getElementById('promptsGrid').classList.remove('visible');
-        const subs = categorySubs[currentCategory] || [];
-        if (subs.length > 0) {
-          document.getElementById('subCategoryGrid').classList.add('visible');
-        } else {
-          document.getElementById('categoryGrid').style.display = 'grid';
-          document.getElementById('backBtn').classList.remove('visible');
-        }
-      } else if (currentLevel === 1) {
-        currentLevel = 0;
-        document.getElementById('subCategoryGrid').classList.remove('visible');
-        document.getElementById('categoryGrid').style.display = 'grid';
-        document.getElementById('backBtn').classList.remove('visible');
-      }
+      currentPage = 'home';
+      document.getElementById('subCategoryPage').classList.remove('active');
+      document.getElementById('homePage').style.display = 'block';
+      window.scrollTo(0, 0);
     }
   </script>
 </body>
