@@ -240,10 +240,10 @@ categories.forEach((cat: string) => {
       background-clip: text;
     }
     
-    /* 子分类 */
+    /* 子分类 - 全新设计 */
     .sub-category-grid {
       display: none;
-      gap: 12px;
+      gap: 16px;
       margin-bottom: 40px;
       flex-wrap: wrap;
       animation: fadeInUp 0.4s ease-out;
@@ -251,45 +251,72 @@ categories.forEach((cat: string) => {
     .sub-category-grid.visible { display: flex; }
     
     .sub-category-btn {
-      background: var(--glass-bg);
-      backdrop-filter: blur(10px);
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+      backdrop-filter: blur(15px);
       color: var(--text-secondary);
-      border: 1px solid var(--glass-border);
-      padding: 14px 24px;
-      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 16px 28px;
+      border-radius: 16px;
       cursor: pointer;
       font-size: 0.95rem;
-      transition: all 0.3s ease;
+      font-weight: 500;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
     }
+    
+    .sub-category-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent-tertiary), var(--accent-primary));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
     .sub-category-btn:hover { 
-      background: var(--glass-hover);
       color: var(--text-primary);
       border-color: var(--accent-tertiary);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(6, 182, 212, 0.25);
     }
     .sub-category-btn.active { 
       background: linear-gradient(135deg, var(--accent-tertiary), var(--accent-primary));
       color: #fff;
       border-color: transparent;
+      box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
     }
     
-    /* 提示词卡片网格 */
+    /* 提示词卡片 - 全新设计 */
     .prompts-grid {
       display: none;
-      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+      gap: 24px;
       animation: fadeInUp 0.5s ease-out;
     }
     .prompts-grid.visible { display: grid; }
     
     .card {
-      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
+      background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
       backdrop-filter: blur(20px);
-      border-radius: 20px;
-      padding: 28px;
-      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
       position: relative;
-      transition: all 0.4s ease;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       animation: cardFadeIn 0.5s ease-out backwards;
+      overflow: hidden;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary));
+      opacity: 0.8;
     }
     
     @keyframes cardFadeIn {
@@ -298,20 +325,29 @@ categories.forEach((cat: string) => {
     }
     
     .card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-6px);
       border-color: rgba(139, 92, 246, 0.4);
       box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.3),
-        0 0 30px rgba(139, 92, 246, 0.15);
+        0 25px 50px rgba(0, 0, 0, 0.35),
+        0 0 40px rgba(139, 92, 246, 0.15);
+    }
+    
+    .card-inner {
+      padding: 28px;
+      padding-left: 32px;
     }
     
     .card h2 { 
       color: var(--text-primary); 
-      font-size: 1.15rem; 
+      font-size: 1.2rem; 
       margin-bottom: 16px; 
       padding-right: 100px;
       font-weight: 600;
       line-height: 1.4;
+      background: linear-gradient(135deg, #fff 0%, #e2e8f0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
     
     .card .content {
@@ -319,17 +355,19 @@ categories.forEach((cat: string) => {
       font-size: 0.875rem;
       line-height: 1.8;
       margin-bottom: 20px;
-      padding: 16px;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 12px;
+      padding: 18px;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 14px;
       white-space: pre-wrap;
-      max-height: 160px;
+      max-height: 150px;
       overflow-y: auto;
       border-left: 3px solid var(--accent-primary);
+      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+      font-size: 0.8rem;
     }
     
     .card .content::-webkit-scrollbar {
-      width: 6px;
+      width: 5px;
     }
     
     .card .content::-webkit-scrollbar-track {
@@ -338,15 +376,17 @@ categories.forEach((cat: string) => {
     }
     
     .card .content::-webkit-scrollbar-thumb {
-      background: var(--accent-primary);
+      background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary));
       border-radius: 3px;
     }
     
     .card .meta { 
       display: flex; 
-      gap: 8px; 
+      gap: 10px; 
       flex-wrap: wrap;
       align-items: center;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
     
     .category-tag {
@@ -355,46 +395,57 @@ categories.forEach((cat: string) => {
       padding: 6px 14px;
       border-radius: 20px;
       font-size: 0.75rem;
-      font-weight: 500;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
     }
     
     .tag {
-      background: var(--glass-bg);
+      background: rgba(255, 255, 255, 0.08);
       color: var(--text-secondary);
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 16px;
       font-size: 0.75rem;
-      border: 1px solid var(--glass-border);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+    }
+    
+    .tag:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--accent-tertiary);
     }
     
     .date {
       color: var(--text-secondary);
       font-size: 0.75rem;
       margin-left: auto;
-      opacity: 0.7;
+      opacity: 0.6;
+      font-family: monospace;
     }
     
     .copy-btn {
       position: absolute;
-      top: 20px;
-      right: 20px;
-      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      top: 24px;
+      right: 24px;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(236, 72, 153, 0.9) 100%);
       color: #fff;
       border: none;
-      padding: 10px 18px;
-      border-radius: 10px;
+      padding: 12px 20px;
+      border-radius: 12px;
       cursor: pointer;
       font-size: 0.8rem;
-      font-weight: 500;
-      transition: all 0.3s ease;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       align-items: center;
       gap: 6px;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+      z-index: 10;
     }
     
     .copy-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+      transform: scale(1.08);
+      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
     }
     
     .copy-btn.copied {
@@ -426,14 +477,19 @@ categories.forEach((cat: string) => {
     
     /* 响应式 */
     @media (max-width: 768px) {
+      body { padding: 24px 16px; }
       h1 { font-size: 2rem; }
-      .subtitle { font-size: 0.95rem; }
-      .category-grid { grid-template-columns: 1fr; }
-      .category-btn { padding: 36px 24px; font-size: 1.1rem; }
-      .prompts-grid { grid-template-columns: 1fr; }
-      .card { padding: 20px; }
-      .card h2 { padding-right: 80px; font-size: 1rem; }
-      .card .content { max-height: 140px; }
+      .subtitle { font-size: 0.95rem; margin-bottom: 32px; }
+      .category-grid { grid-template-columns: 1fr; gap: 16px; }
+      .category-btn { padding: 32px 24px; font-size: 1.1rem; }
+      .category-btn .icon { font-size: 2rem; }
+      .sub-category-btn { padding: 12px 20px; font-size: 0.9rem; }
+      .prompts-grid { grid-template-columns: 1fr; gap: 16px; }
+      .card-inner { padding: 20px; padding-left: 24px; }
+      .card h2 { padding-right: 70px; font-size: 1rem; }
+      .card .content { max-height: 120px; padding: 14px; font-size: 0.75rem; }
+      .copy-btn { top: 16px; right: 16px; padding: 8px 14px; font-size: 0.75rem; }
+      .card::before { width: 3px; }
     }
   </style>
 </head>
@@ -551,12 +607,14 @@ categories.forEach((cat: string) => {
       grid.innerHTML = filtered.map((prompt, index) => `
         <div class="card" style="animation-delay: ${index * 0.08}s">
           <button class="copy-btn">📋 复制</button>
-          <h2>${prompt.title}</h2>
-          <div class="content">${prompt.content}</div>
-          <div class="meta">
-            <span class="category-tag">${prompt.category}</span>
-            ${(prompt.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('')}
-            <span class="date">${prompt.date}</span>
+          <div class="card-inner">
+            <h2>${prompt.title}</h2>
+            <div class="content">${prompt.content}</div>
+            <div class="meta">
+              <span class="category-tag">${prompt.category}</span>
+              ${(prompt.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('')}
+              <span class="date">${prompt.date}</span>
+            </div>
           </div>
         </div>
       `).join('');
